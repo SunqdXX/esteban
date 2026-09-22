@@ -6,6 +6,20 @@ works on windows and linux (mac too prolly, its just java)
 
 heads up tho, most servers ban stuff like this and anticheats catch movement hacks fast. use it in singleplayer, ur own server, or wherever its allowed. if u get banned thats on u
 
+## screenshots
+
+storage esp on a village chest, esp boxes + tracers on every mob
+
+![ingame](screenshots/ingame.png)
+
+the menu, armed with jump and speed settings open
+
+![menu on](screenshots/menu-on.png)
+
+and when its off, nothing runs till u click that red box
+
+![menu off](screenshots/menu-off.png)
+
 ## versions
 
 grab the jar for ur exact version from [releases](https://github.com/SunqdXX/esteban/releases)
