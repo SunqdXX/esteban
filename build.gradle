@@ -1,0 +1,95 @@
+import groovy.json.JsonSlurper
+import java.nio.file.Files
+import java.nio.file.StandardCopyOption
+import java.security.MessageDigest
+
+plugins { id 'java' }
+
+def mc = (project.findProperty('mc') ?: '26.3').toString()
+
+def targets = [
+    '26.1'  : [meta: '15eef5a21b9c6457613432a235efeb8dc1f533bc', fabricApi: '0.145.1+26.1',   platform: '26.1.2'],
+    '26.1.2': [meta: '50187e15f4fe9e772e617db26c58d789f9ec2b31', fabricApi: '0.155.3+26.1.2', platform: '26.1.2'],
+    '26.2'  : [meta: '33c420747ce582e48dff1d8c5d8e67e5bb6257c9', fabricApi: '0.161.0+26.2',   platform: '26.2'],
+    '26.3'  : [meta: 'bc098d111a72e9f6178801544a42099bdfbb0cf2', fabricApi: '0.161.0+26.3',   platform: '26.3'],
+]
+if (!targets.containsKey(mc))
+    throw new GradleException("Unknown mc=${mc}. Supported: ${targets.keySet().join(', ')}")
+def target = targets[mc]
+
+version = "1.1.0+${mc}"
+group   = 'club.sunqd'
+base { archivesName = 'esteban' }
+
+java { toolchain { languageVersion = JavaLanguageVersion.of(25) } }
+
+repositories {
+    mavenCentral()
+    maven { url = 'https://maven.fabricmc.net/' }
+}
+
+def cache = new File(gradle.gradleUserHomeDir, 'caches/esteban')
+
+def sha1 = { File f ->
+    def md = MessageDigest.getInstance('SHA-1')
+    f.withInputStream { i ->
+        def buf = new byte[65536]
+        int n
+        while ((n = i.read(buf)) > 0) md.update(buf, 0, n)
+    }
+    md.digest().encodeHex().toString()
+}
+
+def fetch = { String url, String hash, File dest ->
+    if (dest.isFile() && sha1(dest) == hash)
+        return dest
+    if (gradle.startParameter.offline)
+        throw new GradleException("Offline and missing ${dest}")
+    dest.parentFile.mkdirs()
+    def part = new File(dest.path + '.part')
+    URI.create(url).toURL().withInputStream { i -> part.withOutputStream { o -> o << i } }
+    def got = sha1(part)
+    if (got != hash) {
+        part.delete()
+        throw new GradleException("Checksum mismatch for ${url}: got ${got}, expected ${hash}")
+    }
+    Files.move(part.toPath(), dest.toPath(), StandardCopyOption.REPLACE_EXISTING)
+    dest
+}
+
+def metaFile = fetch("https://piston-meta.mojang.com/v1/packages/${target.meta}/${mc}.json",
+                     target.meta, new File(cache, "versions/${mc}/${mc}.json"))
+def meta = new JsonSlurper().parse(metaFile)
+
+def clientJar = fetch(meta.downloads.client.url, meta.downloads.client.sha1,
+                      new File(cache, "versions/${mc}/client.jar"))
+
+def libraryJars = meta.libraries
+        .findAll { it.downloads?.artifact && it.name.split(':').size() == 3 }
+        .collect { fetch(it.downloads.artifact.url, it.downloads.artifact.sha1,
+                         new File(cache, "libraries/${it.downloads.artifact.path}")) }
+        .unique()
+
+sourceSets {
+    main { java { srcDir "src/platform/${target.platform}/java" } }
+}
+
+dependencies {
+    compileOnly files(clientJar)
+    compileOnly files(libraryJars)
+    compileOnly "net.fabricmc.fabric-api:fabric-api:${target.fabricApi}"
+    compileOnly 'net.fabricmc:fabric-loader:0.19.3'
+}
+
+processResources {
+    inputs.property 'mc', mc
+    inputs.property 'version', project.version
+    filesMatching('fabric.mod.json') {
+        expand mc: mc, version: project.version
+    }
+}
+
+tasks.withType(JavaCompile).configureEach {
+    options.encoding = 'UTF-8'
+    options.compilerArgs << '-nowarn'
+}
