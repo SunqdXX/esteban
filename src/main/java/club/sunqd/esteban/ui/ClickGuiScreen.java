@@ -253,6 +253,11 @@ public class ClickGuiScreen extends Screen {
         };
     }
 
+    @Override
+    public void removed() {
+        EstebanClient.get().save();
+    }
+
     private static final class Panel {
         final Category category;
         int x, y;

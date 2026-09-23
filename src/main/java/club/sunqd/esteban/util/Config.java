@@ -23,7 +23,6 @@ public final class Config {
 
     public void save() {
         List<String> lines = new ArrayList<>();
-        lines.add("# Esteban config - regenerated on exit, edits are kept if the key still exists");
         for (Module m : manager.getModules()) {
             String n = m.getName();
             for (Setting s : m.getSettings()) {

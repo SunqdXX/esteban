@@ -22,10 +22,10 @@ grab the jar for ur exact version from [releases](https://github.com/SunqdXX/est
 
 | minecraft | jar |
 |---|---|
-| 26.3 | `esteban-1.2.0+26.3.jar` |
-| 26.2 | `esteban-1.2.0+26.2.jar` |
-| 26.1.2 | `esteban-1.2.0+26.1.2.jar` |
-| 26.1 | `esteban-1.2.0+26.1.jar` |
+| 26.3 | `esteban-1.2.1+26.3.jar` |
+| 26.2 | `esteban-1.2.1+26.2.jar` |
+| 26.1.2 | `esteban-1.2.1+26.1.2.jar` |
+| 26.1 | `esteban-1.2.1+26.1.jar` |
 
 wrong jar wont load, fabric just tells u its the wrong version before the game even starts
 
@@ -75,7 +75,7 @@ settings save to `esteban/esteban.txt` in ur game folder. which modules were on 
 | Jump | jumps to the exact height u set, in blocks. sprint jumping and holding space to bhop still work normal | `Height` (1.5 to 30) |
 | AimLock | middle click a mob or player and ur aim locks on and follows it smooth. when ur attack bar is full and its in ur normal reach it hits, waits for the bar to fill back up, hits again. every hit is full charge even with a bit of lag, fist sword axe whatever. with `Crits` on, jump and it hits on the way down for crits, even while sprinting. only hits when ur crosshair is on it so no hitting thru walls, lets go when the target dies or gets too far | `Speed`, `LockRange`, `AutoHit`, `Crits` |
 | AimLockCPS | same lock, but when theyre in reach it spams hits like an autoclicker, up to 100 cps. `Random` makes it a bit uneven so it looks human. best on bedwars type servers with no attack cooldown, on normal 26.x servers AimLock kills faster cuz spam hits are weaker | `Speed`, `LockRange`, `AutoHit`, `CPS` (1 to 100), `Random` |
-| NoFall | no fall damage, turn this on if ur doing big jumps | |
+| NoFall | no fall damage from any height, turn this on if ur doing big jumps | |
 | AutoSprint | always sprinting | |
 | Fullbright | see in the dark | |
 | ESP | boxes on players (red) and mobs (green) thru walls | `Range`, `PlayersOnly`, `Corners` |

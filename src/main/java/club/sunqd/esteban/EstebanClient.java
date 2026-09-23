@@ -20,6 +20,7 @@ import club.sunqd.esteban.ui.ClickGuiModule;
 import club.sunqd.esteban.util.Config;
 
 import net.fabricmc.api.ClientModInitializer;
+import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientLifecycleEvents;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.rendering.v1.hud.HudElementRegistry;
 
@@ -34,7 +35,7 @@ import java.util.Set;
 public class EstebanClient implements ClientModInitializer {
 
     public static final String NAME    = "Esteban";
-    public static final String VERSION = "1.2.0";
+    public static final String VERSION = "1.2.1";
 
     private static EstebanClient instance;
 
@@ -72,6 +73,7 @@ public class EstebanClient implements ClientModInitializer {
                 (g, delta) -> modules.onFrame(delta.getGameTimeDeltaPartialTick(true)));
 
         ClientTickEvents.START_CLIENT_TICK.register(this::onStartTick);
+        ClientLifecycleEvents.CLIENT_STOPPING.register(mc -> save());
         ClientTickEvents.END_CLIENT_TICK.register(mc -> {
             if (mc.player != null && mc.level != null)
                 modules.onTickEnd();
@@ -138,7 +140,7 @@ public class EstebanClient implements ClientModInitializer {
         }
     }
 
-    private void save() {
+    public void save() {
         if (config == null) return;
         try {
             config.save();
