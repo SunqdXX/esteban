@@ -4,6 +4,7 @@ import club.sunqd.esteban.compat.Platform;
 import club.sunqd.esteban.module.Module;
 import club.sunqd.esteban.module.ModuleManager;
 import club.sunqd.esteban.modules.combat.AimLock;
+import club.sunqd.esteban.modules.combat.AimLockCPS;
 import club.sunqd.esteban.modules.movement.AutoSprint;
 import club.sunqd.esteban.modules.movement.Fly;
 import club.sunqd.esteban.modules.movement.Jump;
@@ -33,7 +34,7 @@ import java.util.Set;
 public class EstebanClient implements ClientModInitializer {
 
     public static final String NAME    = "Esteban";
-    public static final String VERSION = "1.1.0";
+    public static final String VERSION = "1.2.0";
 
     private static EstebanClient instance;
 
@@ -61,6 +62,7 @@ public class EstebanClient implements ClientModInitializer {
                 new Tracers(),
                 new StorageEsp(),
                 new AimLock(),
+                new AimLockCPS(),
                 new GameMode(),
                 new ClickGuiModule()
         );

@@ -1,6 +1,6 @@
 # esteban
 
-fabric utility client for minecraft 26.x. fly, speed, a jump that actually goes the exact height u set, aim lock that auto hits, esp, tracers, and storage esp so u can see every chest shulker and spawner around u thru walls
+fabric utility client for minecraft 26.x. fly, speed, a jump that actually goes the exact height u set, aim lock that auto hits (full charge or cps spam), esp, tracers, and storage esp so u can see every chest shulker and spawner around u thru walls
 
 works on windows and linux (mac too prolly, its just java)
 
@@ -8,15 +8,11 @@ heads up tho, most servers ban stuff like this and anticheats catch movement hac
 
 ## screenshots
 
-storage esp on a village chest, esp boxes + tracers on every mob
-
-![ingame](screenshots/ingame.png)
-
-the menu, armed with jump and speed settings open
+armed, with the combat settings open (aimlock n aimlockcps sliders)
 
 ![menu on](screenshots/menu-on.png)
 
-and when its off, nothing runs till u click that red box
+and when its off nothing runs till u click that red box
 
 ![menu off](screenshots/menu-off.png)
 
@@ -26,10 +22,10 @@ grab the jar for ur exact version from [releases](https://github.com/SunqdXX/est
 
 | minecraft | jar |
 |---|---|
-| 26.3 | `esteban-1.1.0+26.3.jar` |
-| 26.2 | `esteban-1.1.0+26.2.jar` |
-| 26.1.2 | `esteban-1.1.0+26.1.2.jar` |
-| 26.1 | `esteban-1.1.0+26.1.jar` |
+| 26.3 | `esteban-1.2.0+26.3.jar` |
+| 26.2 | `esteban-1.2.0+26.2.jar` |
+| 26.1.2 | `esteban-1.2.0+26.1.2.jar` |
+| 26.1 | `esteban-1.2.0+26.1.jar` |
 
 wrong jar wont load, fabric just tells u its the wrong version before the game even starts
 
@@ -64,7 +60,7 @@ runs fine next to sodium and iris btw
 - **backspace** opens the menu
 - everything starts off every time u launch, click `CHEATS: OFF` top left to arm it. click it again and everything shuts off at once
 - left click a module to turn it on/off
-- with AimLock on, **middle click** a mob or player to lock onto it. middle click it again (or middle click nothing) to let go
+- with AimLock or AimLockCPS on, **middle click** a mob or player to lock onto it. middle click it again (or middle click nothing) to let go. only one of them can be on at a time, the other one goes dark in the menu
 - right click a module to open its settings, click the switches, drag the sliders
 - drag a panel by its header to move it, right click the header to fold it
 
@@ -77,7 +73,8 @@ settings save to `esteban/esteban.txt` in ur game folder. which modules were on 
 | Fly | lets u fly | `Mode` (Motion, Vanilla, TP), `Speed`, `Hover` |
 | Speed | go faster | `Speed`, `GroundOnly` |
 | Jump | jumps to the exact height u set, in blocks. sprint jumping and holding space to bhop still work normal | `Height` (1.5 to 30) |
-| AimLock | middle click a mob or player and ur aim locks on and follows it smooth. the second ur attack bar is full and its in ur normal reach it hits, then waits for the bar to fill back up and hits again. only hits when ur crosshair is actually on it so no hitting thru walls, and it lets go when the target dies or gets too far | `Speed`, `LockRange`, `AutoHit` |
+| AimLock | middle click a mob or player and ur aim locks on and follows it smooth. when ur attack bar is full and its in ur normal reach it hits, waits for the bar to fill back up, hits again. every hit is full charge even with a bit of lag, fist sword axe whatever. with `Crits` on, jump and it hits on the way down for crits, even while sprinting. only hits when ur crosshair is on it so no hitting thru walls, lets go when the target dies or gets too far | `Speed`, `LockRange`, `AutoHit`, `Crits` |
+| AimLockCPS | same lock, but when theyre in reach it spams hits like an autoclicker, up to 100 cps. `Random` makes it a bit uneven so it looks human. best on bedwars type servers with no attack cooldown, on normal 26.x servers AimLock kills faster cuz spam hits are weaker | `Speed`, `LockRange`, `AutoHit`, `CPS` (1 to 100), `Random` |
 | NoFall | no fall damage, turn this on if ur doing big jumps | |
 | AutoSprint | always sprinting | |
 | Fullbright | see in the dark | |

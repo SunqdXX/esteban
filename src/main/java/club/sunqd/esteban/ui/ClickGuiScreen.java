@@ -27,6 +27,7 @@ public class ClickGuiScreen extends Screen {
     private static final int ROW_ON   = 0xC02A2A38;
     private static final int TEXT     = 0xFFE6E6E6;
     private static final int TEXT_DIM = 0xFF8A8A95;
+    private static final int TEXT_BLOCKED = 0xFF4A4A54;
     private static final int ON_BG    = 0xFF2E7D32;
     private static final int OFF_BG   = 0xFF7A1F1F;
     private static final int SET_BG    = 0xB0161620;
@@ -104,7 +105,7 @@ public class ClickGuiScreen extends Screen {
                     g.fill(p.x, rowY, p.x + 2, rowY + ROW_H, p.category.color());
 
                 g.text(this.font, m.getName(), p.x + 6, rowY + 3,
-                        !armed ? TEXT_DIM : (m.isEnabled() ? TEXT : TEXT_DIM), false);
+                        !armed ? TEXT_DIM : m.isEnabled() ? TEXT : m.canEnable() ? TEXT_DIM : TEXT_BLOCKED, false);
 
                 String right = (binding == m) ? "..." : keyName(m.getKey());
                 if (right != null) {

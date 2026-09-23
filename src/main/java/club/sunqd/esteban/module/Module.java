@@ -52,8 +52,11 @@ public abstract class Module {
 
     public void toggle() { setEnabled(!enabled); }
 
+    public boolean canEnable() { return true; }
+
     public void setEnabled(boolean value) {
         if (this.enabled == value) return;
+        if (value && !canEnable()) return;
         this.enabled = value;
         try {
             if (value) onEnable(); else onDisable();
