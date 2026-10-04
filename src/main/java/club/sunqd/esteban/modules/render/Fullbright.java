@@ -7,6 +7,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.OptionInstance;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
 
 public class Fullbright extends Module {
 
@@ -22,8 +23,16 @@ public class Fullbright extends Module {
 
     private static Field field() throws NoSuchFieldException {
         if (valueField == null) {
-            valueField = OptionInstance.class.getDeclaredField("value");
-            valueField.setAccessible(true);
+            for (Field f : OptionInstance.class.getDeclaredFields()) {
+                final int mod = f.getModifiers();
+                if (f.getType() == Object.class && !Modifier.isStatic(mod) && !Modifier.isFinal(mod)) {
+                    f.setAccessible(true);
+                    valueField = f;
+                    break;
+                }
+            }
+            if (valueField == null)
+                throw new NoSuchFieldException("OptionInstance value");
         }
         return valueField;
     }

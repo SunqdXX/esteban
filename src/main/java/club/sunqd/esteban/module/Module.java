@@ -1,5 +1,7 @@
 package club.sunqd.esteban.module;
 
+import club.sunqd.esteban.EstebanClient;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -47,12 +49,18 @@ public abstract class Module {
     public int getKey()            { return key; }
     public void setKey(int k)      { this.key = k; }
     public boolean isEnabled()     { return enabled; }
+    public boolean isActive() {
+        final EstebanClient client = EstebanClient.get();
+        return enabled && client != null && client.getModuleManager().isArmed();
+    }
     public boolean isHidden()      { return hidden; }
     protected void setHidden(boolean h) { this.hidden = h; }
 
     public void toggle() { setEnabled(!enabled); }
 
     public boolean canEnable() { return true; }
+
+    public boolean isMenu() { return false; }
 
     public void setEnabled(boolean value) {
         if (this.enabled == value) return;

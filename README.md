@@ -1,6 +1,6 @@
 # esteban
 
-fabric utility client for minecraft 26.x. fly, speed, a jump that actually goes the exact height u set, aim lock that auto hits (full charge or cps spam), esp, tracers, and storage esp so u can see every chest shulker and spawner around u thru walls
+fabric utility client for minecraft 26.x, plus a 1.21.4 build for 2b2t and other anarchy servers. fly, speed, jesus, a jump that actually goes the exact height u set, aim lock that auto hits (full charge or cps spam), hitboxes, auto totem, fast place n fast break, anti afk kick, esp, tracers, and storage esp so u can see every chest shulker and spawner around u thru walls
 
 works on windows and linux (mac too prolly, its just java)
 
@@ -22,12 +22,15 @@ grab the jar for ur exact version from [releases](https://github.com/SunqdXX/est
 
 | minecraft | jar |
 |---|---|
-| 26.3 | `esteban-1.2.1+26.3.jar` |
-| 26.2 | `esteban-1.2.1+26.2.jar` |
-| 26.1.2 | `esteban-1.2.1+26.1.2.jar` |
-| 26.1 | `esteban-1.2.1+26.1.jar` |
+| 26.3 | `esteban-1.3.0+26.3.jar` |
+| 26.2 | `esteban-1.3.0+26.2.jar` |
+| 26.1.2 | `esteban-1.3.0+26.1.2.jar` |
+| 26.1 | `esteban-1.3.0+26.1.jar` |
+| 1.21.4 (2b2t) | `esteban-1.3.0+1.21.4.jar` |
 
 wrong jar wont load, fabric just tells u its the wrong version before the game even starts
+
+the 1.21.4 jar is the same client with every module, its there for 2b2t and the other anarchy servers still on 1.21.4. nofall, jesus, autototem and antikick are the ones u want for travel and afk
 
 ## install
 
@@ -53,18 +56,23 @@ pick ur version and set the loader to fabric, then put fabric api + esteban in:
 - windows: `%USERPROFILE%\.lunarclient\profiles\26\mods\fabric-<version>`
 - linux: `~/.lunarclient/profiles/26/mods/fabric-<version>`
 
+for 1.21.4 its `profiles\1.21\mods\fabric-1.21.4` instead
+
 runs fine next to sodium and iris btw
 
 ## how to use
 
-- **backspace** opens the menu
+- **backspace** opens the menu (u can change that key too, its the ClickGUI row in Misc)
 - everything starts off every time u launch, click `CHEATS: OFF` top left to arm it. click it again and everything shuts off at once
 - left click a module to turn it on/off
-- with AimLock or AimLockCPS on, **middle click** a mob or player to lock onto it. middle click it again (or middle click nothing) to let go. only one of them can be on at a time, the other one goes dark in the menu
+- **middle click a module to give it a hotkey**, then press whatever key u want. esc cancels, backspace or delete removes it. the key shows up on the right side of the module
+- middle click the `CHEATS` box to give the master switch its own hotkey, so u can arm everything without opening the menu
+- hotkeys work in game while cheats are armed, never while ur typing in chat. the bar above ur hotbar tells u what u just turned on or off
+- with AimLock or AimLockCPS on, **middle click** a mob or player in game to lock onto it. middle click it again (or middle click nothing) to let go. only one of them can be on at a time, the other one goes dark in the menu
 - right click a module to open its settings, click the switches, drag the sliders
-- drag a panel by its header to move it, right click the header to fold it
+- drag a panel by its header to move it, scroll over a long panel to slide it, right click the header to fold it
 
-settings save to `esteban/esteban.txt` in ur game folder. which modules were on dosent get saved, thats on purpose so u always start clean
+settings and hotkeys save to `esteban/esteban.txt` in ur game folder. which modules were on dosent get saved, thats on purpose so u always start clean
 
 ## modules
 
@@ -74,13 +82,19 @@ settings save to `esteban/esteban.txt` in ur game folder. which modules were on 
 | Speed | go faster | `Speed`, `GroundOnly` |
 | Jump | jumps to the exact height u set, in blocks. sprint jumping and holding space to bhop still work normal | `Height` (1.5 to 30) |
 | AimLock | middle click a mob or player and ur aim locks on and follows it smooth. when ur attack bar is full and its in ur normal reach it hits, waits for the bar to fill back up, hits again. every hit is full charge even with a bit of lag, fist sword axe whatever. with `Crits` on, jump and it hits on the way down for crits, even while sprinting. only hits when ur crosshair is on it so no hitting thru walls, lets go when the target dies or gets too far | `Speed`, `LockRange`, `AutoHit`, `Crits` |
+| AutoTotem | keeps a totem in ur offhand. when one pops the next one goes in right away, even with a chest open. shows how many u got left | `Delay` |
+| Hitboxes | makes player and mob hitboxes bigger so ur hits land easier, aimlock uses it too | `Expand`, `PlayersOnly` |
 | AimLockCPS | same lock, but when theyre in reach it spams hits like an autoclicker, up to 100 cps. `Random` makes it a bit uneven so it looks human. best on bedwars type servers with no attack cooldown, on normal 26.x servers AimLock kills faster cuz spam hits are weaker | `Speed`, `LockRange`, `AutoHit`, `CPS` (1 to 100), `Random` |
 | NoFall | no fall damage from any height, turn this on if ur doing big jumps | |
+| Jesus | walk, sprint and ride on water and lava like its solid ground. sneak to sink. if u fall from high up into water it lets u dive in so u take no fall damage, then pops u back on top. on 1.21.4 lava dont even burn u. on 26.x the server runs its own copy of ur movement so lava still burns there, drink fire res first and ur good | `Lava`, `Vehicles` |
 | AutoSprint | always sprinting | |
 | Fullbright | see in the dark | |
 | ESP | boxes on players (red) and mobs (green) thru walls | `Range`, `PlayersOnly`, `Corners` |
 | Tracers | lines from the bottom of ur screen to every player and mob | `Range` |
 | StorageESP | boxes + name tags on every chest, trapped chest, ender chest, shulker, barrel, hopper, dropper, dispenser and spawner in range, thru walls. blocks stay solid, its just drawn on top | `Range`, `Chests`, `Shulkers`, `Barrels`, `Droppers`, `Spawners`, `Names`, `Tracers` |
+| FastPlace | no cooldown on right click, places blocks and throws stuff every tick instead of every 4 | `Delay` |
+| FastBreak | no cooldown between breaking blocks. `Boost` finishes every block at 70%, thats as early as a normal server accepts so no ghost blocks | `Boost` |
+| AntiKick | when ur afk it does tiny moves every few secs so the server never kicks u for idling. stops the second u touch anything | `Interval`, `Step` |
 | GameMode | sends `/gamemode`, only works if ur op | `Mode` |
 
 storage colors: chests gold, ender chests teal, shulkers purple, barrels tan, hoppers droppers and dispensers grey, spawners red
@@ -105,7 +119,7 @@ jar ends up in `build/libs/`. swap 26.3 for whatever version u want
 
 it pulls the minecraft client and its libs straight from mojang and checks every file against mojangs own checksums, nothing from minecraft is stored in this repo
 
-26.x has no obfuscation so theres no mappings and no mixins, just fabric api's tick and hud hooks. mojang renamed some stuff between versions (and 26.3 ditched glfw for sdl3) so the small classes in `src/platform/` handle that
+26.x has no obfuscation so it builds straight against mojangs own names, no mappings. 1.21.4 is still obfuscated so that one goes thru fabric loom with mojang mappings (`-Pmc=1.21.4`, it wants jdk 21 and gradle grabs that too). a few tiny mixins hook what fabric api cant (water collision for jesus, the crosshair for hitboxes, the place n break cooldowns). mojang renamed stuff between versions (and 26.3 ditched glfw for sdl3) so the small classes in `src/platform/` and `src/glue/` handle that
 
 ## license
 

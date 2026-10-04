@@ -12,8 +12,12 @@ public final class ModuleManager {
     private final Map<String, Module> byName = new LinkedHashMap<>();
 
     private boolean armed;
+    private int masterKey = Module.NO_KEY;
 
     public boolean isArmed() { return armed; }
+
+    public int getMasterKey()          { return masterKey; }
+    public void setMasterKey(int key)  { this.masterKey = key; }
 
     public void setArmed(boolean value) {
         if (this.armed == value) return;

@@ -12,16 +12,21 @@ public final class Platform {
     private Platform() { }
 
     public static double fov(Minecraft mc, float partial) {
-        return mc.gameRenderer.getMainCamera().getFov();
+        final double base = mc.options.fov().get();
+        final LocalPlayer p = mc.player;
+        if (p == null)
+            return base;
+        return base * p.getFieldOfViewModifier(mc.options.getCameraType().isFirstPerson(),
+                mc.options.fovEffectScale().get().floatValue());
     }
 
     public static void notify(Minecraft mc, Component message) {
         if (mc.player != null)
-            mc.player.sendOverlayMessage(message);
+            mc.player.displayClientMessage(message, true);
     }
 
     public static boolean isKeyDown(Minecraft mc, int key) {
-        return InputConstants.isKeyDown(mc.getWindow(), key);
+        return InputConstants.isKeyDown(mc.getWindow().getWindow(), key);
     }
 
     public static void swing(LocalPlayer p) {

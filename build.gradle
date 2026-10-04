@@ -3,41 +3,66 @@ import java.nio.file.Files
 import java.nio.file.StandardCopyOption
 import java.security.MessageDigest
 
-plugins { id 'java' }
+plugins {
+    id 'java'
+    id 'fabric-loom' version '1.17.20' apply false
+}
 
 def mc = (project.findProperty('mc') ?: '26.3').toString()
 
 def targets = [
-    '26.1'  : [meta: '15eef5a21b9c6457613432a235efeb8dc1f533bc', fabricApi: '0.145.1+26.1',   platform: '26.1.2'],
-    '26.1.2': [meta: '50187e15f4fe9e772e617db26c58d789f9ec2b31', fabricApi: '0.155.3+26.1.2', platform: '26.1.2'],
-    '26.2'  : [meta: '33c420747ce582e48dff1d8c5d8e67e5bb6257c9', fabricApi: '0.161.0+26.2',   platform: '26.2'],
-    '26.3'  : [meta: 'bc098d111a72e9f6178801544a42099bdfbb0cf2', fabricApi: '0.161.0+26.3',   platform: '26.3'],
+    '1.21.4': [loom: true, fabricApi: '0.119.4+1.21.4', platform: '1.21.4', glue: 'v1214', java: 21],
+    '26.1'  : [meta: '15eef5a21b9c6457613432a235efeb8dc1f533bc', fabricApi: '0.145.1+26.1',   platform: '26.1.2', glue: 'v26', java: 25],
+    '26.1.2': [meta: '50187e15f4fe9e772e617db26c58d789f9ec2b31', fabricApi: '0.155.3+26.1.2', platform: '26.1.2', glue: 'v26', java: 25],
+    '26.2'  : [meta: '33c420747ce582e48dff1d8c5d8e67e5bb6257c9', fabricApi: '0.161.0+26.2',   platform: '26.2',   glue: 'v26', java: 25],
+    '26.3'  : [meta: 'bc098d111a72e9f6178801544a42099bdfbb0cf2', fabricApi: '0.161.0+26.3',   platform: '26.3',   glue: 'v26', java: 25],
 ]
 if (!targets.containsKey(mc))
     throw new GradleException("Unknown mc=${mc}. Supported: ${targets.keySet().join(', ')}")
 def target = targets[mc]
 
-version = "1.2.1+${mc}"
+version = "1.3.0+${mc}"
 group   = 'club.sunqd'
 base { archivesName = 'esteban' }
 
-java { toolchain { languageVersion = JavaLanguageVersion.of(25) } }
+java { toolchain { languageVersion = JavaLanguageVersion.of(target.java) } }
 
 repositories {
     mavenCentral()
     maven { url = 'https://maven.fabricmc.net/' }
 }
 
-def cache = new File(gradle.gradleUserHomeDir, 'caches/esteban')
-
-def sha1 = { File f ->
-    def md = MessageDigest.getInstance('SHA-1')
-    f.withInputStream { i ->
-        def buf = new byte[65536]
-        int n
-        while ((n = i.read(buf)) > 0) md.update(buf, 0, n)
+sourceSets {
+    main {
+        java {
+            srcDir "src/platform/${target.platform}/java"
+            srcDir "src/glue/${target.glue}/java"
+        }
+        resources {
+            srcDir "src/glue/${target.glue}/resources"
+        }
     }
-    md.digest().encodeHex().toString()
+}
+
+if (target.loom) {
+    apply plugin: 'fabric-loom'
+    dependencies {
+        minecraft "com.mojang:minecraft:${mc}"
+        mappings loom.officialMojangMappings()
+        modImplementation 'net.fabricmc:fabric-loader:0.19.3'
+        modImplementation "net.fabricmc.fabric-api:fabric-api:${target.fabricApi}"
+    }
+} else {
+    def cache = new File(gradle.gradleUserHomeDir, 'caches/esteban')
+
+    def sha1 = { File f ->
+        def md = MessageDigest.getInstance('SHA-1')
+        f.withInputStream { i ->
+            def buf = new byte[65536]
+            int n
+            while ((n = i.read(buf)) > 0) md.update(buf, 0, n)
+        }
+        md.digest().encodeHex().toString()
 }
 
 def fetch = { String url, String hash, File dest ->
@@ -70,15 +95,14 @@ def libraryJars = meta.libraries
                          new File(cache, "libraries/${it.downloads.artifact.path}")) }
         .unique()
 
-sourceSets {
-    main { java { srcDir "src/platform/${target.platform}/java" } }
-}
-
 dependencies {
     compileOnly files(clientJar)
     compileOnly files(libraryJars)
     compileOnly "net.fabricmc.fabric-api:fabric-api:${target.fabricApi}"
     compileOnly 'net.fabricmc:fabric-loader:0.19.3'
+    compileOnly 'net.fabricmc:sponge-mixin:0.17.3+mixin.0.8.7'
+}
+
 }
 
 processResources {

@@ -1,5 +1,6 @@
 package club.sunqd.esteban.util;
 
+import club.sunqd.esteban.compat.Platform;
 import club.sunqd.esteban.module.Module;
 import club.sunqd.esteban.module.ModuleManager;
 import club.sunqd.esteban.module.Setting;
@@ -23,8 +24,10 @@ public final class Config {
 
     public void save() {
         List<String> lines = new ArrayList<>();
+        lines.add("_.master=" + key(manager.getMasterKey()));
         for (Module m : manager.getModules()) {
             String n = m.getName();
+            lines.add(n + ".k=" + key(m.getKey()));
             for (Setting s : m.getSettings()) {
                 lines.add(n + ".s." + s.getName() + "=" + s.serialize());
             }
@@ -62,13 +65,31 @@ public final class Config {
             String moduleName = key.substring(0, firstDot);
             String rest = key.substring(firstDot + 1);
 
+            if (moduleName.equals("_")) {
+                if (rest.equals("master"))
+                    manager.setMasterKey(code(val));
+                continue;
+            }
+
             Module m = manager.get(moduleName);
             if (m == null) continue;
 
-            if (rest.startsWith("s.")) {
+            if (rest.equals("k")) {
+                int code = code(val);
+                if (code != Module.NO_KEY || !m.isMenu())
+                    m.setKey(code);
+            } else if (rest.startsWith("s.")) {
                 Setting s = m.getSetting(rest.substring(2));
                 if (s != null) s.deserialize(val);
             }
         }
+    }
+
+    private static String key(int code) {
+        return code == Module.NO_KEY ? "none" : Platform.keyId(code);
+    }
+
+    private static int code(String id) {
+        return id.equals("none") ? Module.NO_KEY : Platform.keyCode(id);
     }
 }

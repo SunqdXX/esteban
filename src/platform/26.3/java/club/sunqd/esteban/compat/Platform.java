@@ -2,7 +2,6 @@ package club.sunqd.esteban.compat;
 
 import com.mojang.blaze3d.platform.InputConstants;
 
-import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.network.chat.Component;
@@ -12,11 +11,13 @@ public final class Platform {
 
     private Platform() { }
 
-    public static Camera camera(Minecraft mc) {
-        return mc.gameRenderer.mainCamera();
+    public static double fov(Minecraft mc, float partial) {
+        return mc.gameRenderer.mainCamera().getFov();
     }
 
     public static void notify(Minecraft mc, Component message) {
+        if (mc.player != null)
+            mc.player.sendOverlayMessage(message);
     }
 
     public static boolean isKeyDown(Minecraft mc, int key) {
@@ -29,5 +30,18 @@ public final class Platform {
 
     public static String keyName(int key) {
         return InputConstants.Type.KEYBOARD.getOrCreate(key).getDisplayName().getString();
+    }
+
+    public static String keyId(int key) {
+        return InputConstants.Type.KEYBOARD.getOrCreate(key).getName();
+    }
+
+    public static int keyCode(String id) {
+        try {
+            final InputConstants.Key k = InputConstants.getKey(id);
+            return k.getType() == InputConstants.Type.KEYBOARD ? k.getValue() : -1;
+        } catch (RuntimeException e) {
+            return -1;
+        }
     }
 }

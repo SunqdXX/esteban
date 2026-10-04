@@ -55,7 +55,7 @@ public class Fly extends Module {
 
         if (!p.onGround()) {
             landingGrace = true;
-            p.fallDistance = 0.0;
+            p.fallDistance = 0;
         }
     }
 
@@ -64,7 +64,7 @@ public class Fly extends Module {
         if (!landingGrace) return;
         LocalPlayer p = Minecraft.getInstance().player;
         if (p == null) { landingGrace = false; return; }
-        p.fallDistance = 0.0;
+        p.fallDistance = 0;
         if (p.onGround()) landingGrace = false;
     }
 
@@ -73,7 +73,7 @@ public class Fly extends Module {
         LocalPlayer p = Minecraft.getInstance().player;
         if (p == null) return;
 
-        p.fallDistance = 0.0;
+        p.fallDistance = 0;
 
         if (mode.is("Vanilla"))
             vanilla(p);
@@ -137,7 +137,7 @@ public class Fly extends Module {
                 p.setDeltaMovement(vx, vy, vz);
         }
 
-        p.fallDistance = 0.0;
+        p.fallDistance = 0;
     }
 
     private void releaseNoGravity(LocalPlayer p) {

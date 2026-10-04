@@ -18,6 +18,7 @@
       "club.sunqd.esteban.EstebanClient"
     ]
   },
+  "mixins": ["esteban.mixins.json"],
   "depends": {
     "minecraft": "${mc}",
     "fabricloader": ">=0.16.0",

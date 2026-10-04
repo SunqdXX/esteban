@@ -3,6 +3,7 @@ build/
 libs/
 out/
 run/
+logs/
 .idea/
 *.iml
 .vscode/

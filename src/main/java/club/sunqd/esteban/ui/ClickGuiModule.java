@@ -5,19 +5,24 @@ import club.sunqd.esteban.module.Module;
 
 import com.mojang.blaze3d.platform.InputConstants;
 
-import net.minecraft.client.Minecraft;
-
 public class ClickGuiModule extends Module {
 
     public ClickGuiModule() {
         super("ClickGUI", "Opens the Esteban menu.", Category.MISC,
-              InputConstants.KEY_BACKSPACE);
+              DEFAULT_KEY);
         setHidden(true);
+    }
+
+    public static final int DEFAULT_KEY = InputConstants.KEY_BACKSPACE;
+
+    @Override
+    public boolean isMenu() {
+        return true;
     }
 
     @Override
     public void onEnable() {
-        Minecraft.getInstance().setScreenAndShow(new ClickGuiScreen());
+        ClickGuiScreen.open();
         setEnabledSilently(false);
     }
 }

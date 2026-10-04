@@ -7,17 +7,10 @@ import club.sunqd.esteban.modules.render.Esp;
 import club.sunqd.esteban.modules.render.StorageEsp;
 import club.sunqd.esteban.modules.render.Tracers;
 
-import net.fabricmc.fabric.api.client.rendering.v1.hud.HudElement;
-import net.fabricmc.fabric.api.client.rendering.v1.hud.HudElementRegistry;
-
-import net.minecraft.client.Camera;
-import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.BlockPos;
-import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
@@ -35,16 +28,11 @@ import net.minecraft.world.level.chunk.status.ChunkStatus;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 
-public final class EspRenderer implements HudElement {
+public final class EspRenderer {
 
     private static final double NEAR = 0.05;
 
     private EspRenderer() { }
-
-    public static void install() {
-        HudElementRegistry.addLast(
-                Identifier.fromNamespaceAndPath("esteban", "esp"), new EspRenderer());
-    }
 
     private static double[] toCamera(Vec3 eye, double yawRad, double pitchRad, Vec3 world) {
         final double dx = world.x - eye.x;
@@ -107,7 +95,7 @@ public final class EspRenderer implements HudElement {
         return new int[] { l, t, r, b };
     }
 
-    private static void bresenham(GuiGraphicsExtractor g, int x0, int y0, int x1, int y1,
+    private static void bresenham(Canvas g, int x0, int y0, int x1, int y1,
                                   int colour, int sw, int sh) {
         int dx = Math.abs(x1 - x0), sx = x0 < x1 ? 1 : -1;
         int dy = -Math.abs(y1 - y0), sy = y0 < y1 ? 1 : -1;
@@ -124,14 +112,14 @@ public final class EspRenderer implements HudElement {
         }
     }
 
-    private static void rect(GuiGraphicsExtractor g, int l, int t, int r, int b, int c) {
+    private static void rect(Canvas g, int l, int t, int r, int b, int c) {
         g.fill(l, t, r, t + 1, c);
         g.fill(l, b - 1, r, b, c);
         g.fill(l, t, l + 1, b, c);
         g.fill(r - 1, t, r, b, c);
     }
 
-    private static void corners(GuiGraphicsExtractor g, int l, int t, int r, int b, int c) {
+    private static void corners(Canvas g, int l, int t, int r, int b, int c) {
         final int len = Math.max(2, Math.min((r - l), (b - t)) / 4);
         g.fill(l, t, l + len, t + 1, c);    g.fill(l, t, l + 1, t + len, c);
         g.fill(r - len, t, r, t + 1, c);    g.fill(r - 1, t, r, t + len, c);
@@ -139,16 +127,15 @@ public final class EspRenderer implements HudElement {
         g.fill(r - len, b - 1, r, b, c);    g.fill(r - 1, b - len, r, b, c);
     }
 
-    private static void nametag(GuiGraphicsExtractor g, Minecraft mc, String s,
+    private static void nametag(Canvas g, Minecraft mc, String s,
                                 int centreX, int y, int colour) {
-        final int w = mc.font.width(s);
+        final int w = g.width(s);
         final int x = centreX - w / 2;
         g.fill(x - 1, y - 1, x + w + 1, y + 9, 0xB0000000);
-        g.text(mc.font, s, x, y, colour);
+        g.text(s, x, y, colour);
     }
 
-    @Override
-    public void extractRenderState(GuiGraphicsExtractor g, DeltaTracker delta) {
+    public static void render(Canvas g, float partial) {
         final var mm = EstebanClient.get().getModuleManager();
         if (!mm.isArmed())
             return;
@@ -169,11 +156,7 @@ public final class EspRenderer implements HudElement {
 
         final int sw = mc.getWindow().getGuiScaledWidth();
         final int sh = mc.getWindow().getGuiScaledHeight();
-        final Camera cam = Platform.camera(mc);
-        if (cam == null)
-            return;
-        final double fov = cam.getFov();
-        final float partial = delta.getGameTimeDeltaPartialTick(true);
+        final double fov = Platform.fov(mc, partial);
 
         final Vec3 eye = p.getEyePosition(partial);
         final double yaw = Math.toRadians(p.getYRot());
@@ -187,7 +170,7 @@ public final class EspRenderer implements HudElement {
             drawStorage(g, mc, (StorageEsp) stoM, p, eye, yaw, pitch, focal, sw, sh);
     }
 
-    private void drawEntities(GuiGraphicsExtractor g, Minecraft mc, LocalPlayer p,
+    private static void drawEntities(Canvas g, Minecraft mc, LocalPlayer p,
                               boolean esp, boolean tra, Module espM, Module traM,
                               Vec3 eye, double yaw, double pitch, double focal,
                               int sw, int sh, float partial) {
@@ -236,7 +219,7 @@ public final class EspRenderer implements HudElement {
         return 0;
     }
 
-    private void drawStorage(GuiGraphicsExtractor g, Minecraft mc, StorageEsp s,
+    private static void drawStorage(Canvas g, Minecraft mc, StorageEsp s,
                              LocalPlayer p, Vec3 eye, double yaw, double pitch,
                              double focal, int sw, int sh) {
         final ClientLevel level = mc.level;

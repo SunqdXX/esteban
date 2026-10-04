@@ -12,33 +12,64 @@ public class NoFall extends Module {
 
     static final double CAP = 2.9;
     static final double SPOOF_AT = 2.5;
+    static final double TELEPORT = 4.0;
+
+    private double lastY = Double.NaN;
+    private double fallen;
 
     public NoFall() {
         super("NoFall", "Cancels fall damage.", Category.MOVEMENT);
     }
 
     @Override
-    public void onTick() {
-        final LocalPlayer p = Minecraft.getInstance().player;
-        if (p == null || exempt(p))
-            return;
-        final Vec3 v = p.getDeltaMovement();
-        if (v.y < -CAP)
-            p.setDeltaMovement(v.x, -CAP, v.z);
+    public void onEnable() {
+        reset();
     }
 
     @Override
-    public void onTickEnd() {
-        final LocalPlayer p = Minecraft.getInstance().player;
-        if (p == null || p.connection == null || p.onGround() || exempt(p))
-            return;
-        final double vy = p.getDeltaMovement().y;
-        if (vy < 0 && shouldSpoof(p.fallDistance, vy))
-            p.connection.send(new ServerboundMovePlayerPacket.StatusOnly(true, p.horizontalCollision));
+    public void onDisable() {
+        reset();
     }
 
-    static boolean shouldSpoof(double fallDistance, double vy) {
-        return fallDistance + Math.min(CAP, -vy) > SPOOF_AT;
+    private void reset() {
+        lastY = Double.NaN;
+        fallen = 0;
+    }
+
+    @Override
+    public void onTick() {
+        final LocalPlayer p = Minecraft.getInstance().player;
+        if (p == null || p.connection == null) {
+            reset();
+            return;
+        }
+        final double y = p.getY();
+        final double dy = Double.isNaN(lastY) ? 0 : y - lastY;
+        lastY = y;
+
+        if (p.onGround() || exempt(p) || Math.abs(dy) > TELEPORT) {
+            fallen = 0;
+            return;
+        }
+        fallen = track(fallen, dy);
+
+        Vec3 v = p.getDeltaMovement();
+        if (v.y < -CAP) {
+            v = new Vec3(v.x, -CAP, v.z);
+            p.setDeltaMovement(v);
+        }
+        if (v.y < 0 && shouldSpoof(fallen, v.y)) {
+            p.connection.send(new ServerboundMovePlayerPacket.StatusOnly(true, p.horizontalCollision));
+            fallen = 0;
+        }
+    }
+
+    static double track(double fallen, double dy) {
+        return dy < 0 ? fallen - dy : fallen;
+    }
+
+    static boolean shouldSpoof(double fallen, double vy) {
+        return fallen + Math.min(CAP, -vy) > SPOOF_AT;
     }
 
     private static boolean exempt(LocalPlayer p) {
