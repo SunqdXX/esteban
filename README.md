@@ -115,11 +115,19 @@ windows (powershell, keep the quotes, powershell gets weird with the dot):
 .\gradlew.bat build "-Pmc=26.3"
 ```
 
-jar ends up in `build/libs/`. swap 26.3 for whatever version u want
+jar ends up in `hacks/build/libs/` (`esteban-<version>+<mc>.jar`). swap 26.3 for whatever version u want
 
 it pulls the minecraft client and its libs straight from mojang and checks every file against mojangs own checksums, nothing from minecraft is stored in this repo
 
 26.x has no obfuscation so it builds straight against mojangs own names, no mappings. 1.21.4 is still obfuscated so that one goes thru fabric loom with mojang mappings (`-Pmc=1.21.4`, it wants jdk 21 and gradle grabs that too). a few tiny mixins hook what fabric api cant (water collision for jesus, the crosshair for hitboxes, the place n break cooldowns). mojang renamed stuff between versions (and 26.3 ditched glfw for sdl3) so the small classes in `src/platform/` and `src/glue/` handle that
+
+the repo is 3 gradle projects:
+
+- `hacks` is this client
+- `common` is the shared stuff (key hooks, drawing, menus), zero cheats in it. it gets packed inside the jar so u still only drop in one file
+- `hud` is a separate jar with no cheats at all, for servers where hacks get u banned. its empty for now, the hud itself comes next
+
+`build` also runs `checkHudClean`, which fails if the hud jar (or the common jar inside it) could ever reach any hacks code
 
 ## license
 
