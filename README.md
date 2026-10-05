@@ -125,7 +125,7 @@ the repo is 3 gradle projects:
 
 - `hacks` is this client
 - `common` is the shared stuff (key hooks, drawing, menus), zero cheats in it. it gets packed inside the jar so u still only drop in one file
-- `hud` is a separate jar with no cheats at all, for servers where hacks get u banned. its empty for now, the hud itself comes next
+- `hud` is a separate jar with no cheats at all, for servers where hacks get u banned. so far it shows fps, cps, coords and ping in the top left, more modules and a drag editor are coming. its settings save to `config/esteban-hud.json`
 
 `build` also runs `checkHudClean`, which fails if the hud jar (or the common jar inside it) could ever reach any hacks code
 
