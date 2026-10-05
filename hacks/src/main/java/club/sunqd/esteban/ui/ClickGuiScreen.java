@@ -4,8 +4,15 @@ import club.sunqd.esteban.common.screen.CanvasScreen;
 
 public class ClickGuiScreen extends CanvasScreen {
 
+    private final ClickGui gui;
+
     public ClickGuiScreen() {
-        super("Esteban", new ClickGui());
+        this(new ClickGui());
+    }
+
+    private ClickGuiScreen(ClickGui gui) {
+        super("Esteban", gui);
+        this.gui = gui;
     }
 
     public static void open() {
