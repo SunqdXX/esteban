@@ -1,0 +1,22 @@
+{
+  "schemaVersion": 1,
+  "id": "esteban-common",
+  "version": "${version}",
+  "name": "Esteban Common",
+  "description": "Shared input, drawing and screen code for the Esteban mods.",
+  "authors": [
+    "sunqd"
+  ],
+  "contact": {
+    "sources": "https://github.com/SunqdXX/esteban",
+    "issues": "https://github.com/SunqdXX/esteban/issues"
+  },
+  "license": "GPL-3.0-only",
+  "environment": "client",
+  "mixins": ["esteban-common.mixins.json"],
+  "depends": {
+    "minecraft": "${mc}",
+    "fabricloader": ">=0.16.0",
+    "fabric-rendering-v1": "*"
+  }
+}

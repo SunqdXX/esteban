@@ -1,0 +1,15 @@
+{
+  "required": false,
+  "minVersion": "0.8",
+  "package": "club.sunqd.esteban.mixin",
+  "compatibilityLevel": "JAVA_25",
+  "client": [
+    "BlockStateBaseMixin",
+    "GameModeAccess",
+    "MinecraftAccess",
+    "MinecraftPickMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 0
+  }
+}

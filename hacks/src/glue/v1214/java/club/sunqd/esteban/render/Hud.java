@@ -1,0 +1,32 @@
+package club.sunqd.esteban.render;
+
+import club.sunqd.esteban.common.render.HudLayers;
+import club.sunqd.esteban.module.ModuleManager;
+
+import net.minecraft.client.Minecraft;
+
+public final class Hud {
+
+    private static ModuleManager modules;
+    private static boolean aimed;
+
+    private Hud() { }
+
+    public static void install(ModuleManager mm) {
+        modules = mm;
+        HudLayers.add("esteban", "esp", (canvas, partial) -> {
+            EspRenderer.render(canvas, partial);
+            if (!aimed)
+                modules.onFrame(partial);
+            aimed = false;
+        });
+    }
+
+    public static void beforeCamera() {
+        final Minecraft mc = Minecraft.getInstance();
+        if (modules == null || mc.player == null || mc.level == null)
+            return;
+        aimed = true;
+        modules.onFrame(mc.getDeltaTracker().getGameTimeDeltaPartialTick(true));
+    }
+}
