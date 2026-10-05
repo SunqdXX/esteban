@@ -9,4 +9,10 @@ public interface Canvas {
     void text(String s, int x, int y, int color, boolean shadow);
 
     int width(String s);
+
+    int fontHeight();
+
+    void push(float x, float y, float scale);
+
+    void pop();
 }

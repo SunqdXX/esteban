@@ -24,4 +24,21 @@ public record GfxCanvas(GuiGraphics g, Font font) implements Canvas {
     public int width(String s) {
         return font.width(s);
     }
+
+    @Override
+    public int fontHeight() {
+        return font.lineHeight;
+    }
+
+    @Override
+    public void push(float x, float y, float scale) {
+        g.pose().pushPose();
+        g.pose().translate(x, y, 0);
+        g.pose().scale(scale, scale, 1);
+    }
+
+    @Override
+    public void pop() {
+        g.pose().popPose();
+    }
 }
