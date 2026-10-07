@@ -3,6 +3,7 @@ package club.sunqd.esteban.common.compat;
 import com.mojang.blaze3d.platform.InputConstants;
 
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 
 public final class Platform {
@@ -33,5 +34,9 @@ public final class Platform {
         } catch (RuntimeException e) {
             return -1;
         }
+    }
+
+    public static Screen screen(Minecraft mc) {
+        return mc.screen;
     }
 }

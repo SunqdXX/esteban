@@ -12,10 +12,22 @@ import net.minecraft.network.chat.Component;
 public class CanvasScreen extends Screen {
 
     private final Panel panel;
+    private final boolean dim;
 
     public CanvasScreen(String title, Panel panel) {
+        this(title, panel, true);
+    }
+
+    public CanvasScreen(String title, Panel panel, boolean dim) {
         super(Component.literal(title));
         this.panel = panel;
+        this.dim = dim;
+    }
+
+    @Override
+    public void extractBackground(GuiGraphicsExtractor g, int mouseX, int mouseY, float delta) {
+        if (dim)
+            super.extractBackground(g, mouseX, mouseY, delta);
     }
 
     public void show() {
