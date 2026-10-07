@@ -28,6 +28,16 @@ public final class Hud {
             new Potions(10000, 104)
     );
 
+    private volatile boolean editing;
+
+    public boolean editing() {
+        return editing;
+    }
+
+    public void editing(boolean on) {
+        editing = on;
+    }
+
     public List<Element> elements() {
         return elements;
     }
@@ -41,7 +51,7 @@ public final class Hud {
 
     public void render(Canvas canvas, float partial) {
         final Minecraft mc = Minecraft.getInstance();
-        if (mc.player == null)
+        if (mc.player == null || editing)
             return;
         final int width = mc.getWindow().getGuiScaledWidth();
         final int height = mc.getWindow().getGuiScaledHeight();

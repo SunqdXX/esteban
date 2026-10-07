@@ -1,12 +1,21 @@
 package club.sunqd.esteban.hud;
 
+import club.sunqd.esteban.common.compat.Platform;
+import club.sunqd.esteban.common.input.Keys;
 import club.sunqd.esteban.common.render.HudLayers;
+import club.sunqd.esteban.common.screen.CanvasScreen;
+import club.sunqd.esteban.hud.editor.HudEditor;
 import club.sunqd.esteban.hud.input.Clicks;
+
+import com.mojang.blaze3d.platform.InputConstants;
 
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientLifecycleEvents;
+import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.event.client.player.ClientPreAttackCallback;
 import net.fabricmc.loader.api.FabricLoader;
+
+import net.minecraft.client.Minecraft;
 
 public class EstebanHud implements ClientModInitializer {
 
@@ -17,6 +26,7 @@ public class EstebanHud implements ClientModInitializer {
 
     private final Hud hud = new Hud();
     private HudConfig config;
+    private volatile boolean openEditor;
 
     public static EstebanHud get() {
         return instance;
@@ -41,6 +51,20 @@ public class EstebanHud implements ClientModInitializer {
             if (clicks > 0)
                 Clicks.LEFT.add(clicks);
             return false;
+        });
+        Keys.onPress(key -> {
+            final Minecraft mc = Minecraft.getInstance();
+            if (key == InputConstants.KEY_RSHIFT && mc.player != null && Platform.screen(mc) == null)
+                openEditor = true;
+        });
+        ClientTickEvents.END_CLIENT_TICK.register(mc -> {
+            if (!openEditor)
+                return;
+            openEditor = false;
+            if (mc.player == null || Platform.screen(mc) != null)
+                return;
+            hud.editing(true);
+            new CanvasScreen("HUD editor", new HudEditor(hud, config), false).show();
         });
         ClientLifecycleEvents.CLIENT_STOPPING.register(mc -> config.save(hud));
         System.out.println("[" + NAME + "] " + VERSION + " loaded with " + hud.elements().size() + " element(s)");

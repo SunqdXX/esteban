@@ -21,5 +21,9 @@ public final class Palette {
 
     public static final int RED = 0xFFF7768E;
 
+    public static final int MUTED = 0xFF565F89;
+
+    public static final int VENOM = 0xFF39FF88;
+
     private Palette() { }
 }
