@@ -30,6 +30,10 @@ public class CanvasScreen extends Screen {
             super.extractBackground(g, mouseX, mouseY, delta);
     }
 
+    public Panel panel() {
+        return panel;
+    }
+
     public void show() {
         Minecraft.getInstance().setScreenAndShow(this);
     }
