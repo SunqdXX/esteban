@@ -1,12 +1,14 @@
 package club.sunqd.esteban.hud;
 
 import club.sunqd.esteban.common.render.Canvas;
+import club.sunqd.esteban.hud.element.ArmorStatus;
 import club.sunqd.esteban.hud.element.Coords;
 import club.sunqd.esteban.hud.element.Cps;
 import club.sunqd.esteban.hud.element.Element;
 import club.sunqd.esteban.hud.element.Fps;
 import club.sunqd.esteban.hud.element.Keystrokes;
 import club.sunqd.esteban.hud.element.Ping;
+import club.sunqd.esteban.hud.element.Potions;
 import club.sunqd.esteban.hud.element.ToggleSprint;
 
 import net.minecraft.client.Minecraft;
@@ -21,7 +23,9 @@ public final class Hud {
             new Coords(4, 36),
             new Ping(4, 52),
             new Keystrokes(4, 68),
-            new ToggleSprint(4, 156)
+            new ToggleSprint(4, 156),
+            new ArmorStatus(10000, 10000),
+            new Potions(10000, 104)
     );
 
     public List<Element> elements() {

@@ -17,5 +17,9 @@ public final class Palette {
 
     public static final int INK = 0xFF1A1B26;
 
+    public static final int DIM = 0xFF9AA5CE;
+
+    public static final int RED = 0xFFF7768E;
+
     private Palette() { }
 }
