@@ -18,16 +18,23 @@ import java.util.Map;
 public final class HudEditor implements Panel {
 
     private static final int SNAP = 4;
-    private static final String[] HELP = {"Drag to move   Right click on/off", "Scroll to resize   Middle click color   Esc saves"};
+    private static final int GRAB = 3;
+    private static final int HANDLE = 4;
+    private static final String[] HELP = {"Drag to move   Drag a corner to resize", "Right click on/off   Middle click color   Scroll resizes too   Esc saves"};
 
     private final Hud hud;
     private final HudConfig config;
     private final Map<Element, int[]> boxes = new LinkedHashMap<>();
+    private final Map<Element, int[]> bases = new LinkedHashMap<>();
 
     private Element dragging;
     private Element hovered;
     private int grabX;
     private int grabY;
+    private Element resizing;
+    private int corner;
+    private int anchorX;
+    private int anchorY;
 
     public HudEditor(Hud hud, HudConfig config) {
         this.hud = hud;
@@ -36,6 +43,11 @@ public final class HudEditor implements Panel {
 
     public Element hovered() {
         return hovered;
+    }
+
+    public int[] boxOf(Element e) {
+        final int[] b = boxes.get(e);
+        return b == null ? null : b.clone();
     }
 
     private static boolean shown(Element e) {
@@ -48,17 +60,51 @@ public final class HudEditor implements Panel {
         return e.enabled ? e.name() : e.name() + OFF;
     }
 
+    private int[] base(Canvas c, Element e) {
+        if (shown(e))
+            return new int[] {Math.max(1, e.width(c)), Math.max(1, e.height(c))};
+        return new int[] {c.width(placeholder(e)) + 8, c.fontHeight() + 5};
+    }
+
     private int[] box(Canvas c, Element e, int sw, int sh) {
-        final int w;
-        final int h;
-        if (shown(e)) {
-            w = Math.round(e.width(c) * e.scale);
-            h = Math.round(e.height(c) * e.scale);
-        } else {
-            w = Math.round((c.width(placeholder(e)) + 8) * e.scale);
-            h = Math.round((c.fontHeight() + 5) * e.scale);
-        }
+        final int[] base = base(c, e);
+        final int w = Math.round(base[0] * e.scale);
+        final int h = Math.round(base[1] * e.scale);
         return new int[] {Element.place(e.x, w, sw), Element.place(e.y, h, sh), w, h};
+    }
+
+    private static int[] cornerPoint(int[] b, int corner) {
+        return new int[] {corner % 2 == 0 ? b[0] : b[0] + b[2], corner < 2 ? b[1] : b[1] + b[3]};
+    }
+
+    private Object[] cornerAt(int x, int y) {
+        Object[] found = null;
+        for (Map.Entry<Element, int[]> entry : boxes.entrySet()) {
+            for (int k = 0; k < 4; k++) {
+                final int[] p = cornerPoint(entry.getValue(), k);
+                if (Math.abs(x - p[0]) <= GRAB && Math.abs(y - p[1]) <= GRAB)
+                    found = new Object[] {entry.getKey(), k};
+            }
+        }
+        return found;
+    }
+
+    private void resize(int mouseX, int mouseY, int sw, int sh) {
+        final int[] base = bases.get(resizing);
+        if (base == null)
+            return;
+        final float dx = Math.abs(mouseX - anchorX);
+        final float dy = Math.abs(mouseY - anchorY);
+        float s = Math.max(dx / base[0], dy / base[1]);
+        s = Math.round(s * 20f) / 20f;
+        s = Math.max(0.5f, Math.min(3f, s));
+        resizing.scale = s;
+        final int w = Math.round(base[0] * s);
+        final int h = Math.round(base[1] * s);
+        final int x = corner % 2 == 0 ? anchorX - w : anchorX;
+        final int y = corner < 2 ? anchorY - h : anchorY;
+        resizing.x = clamp(x, sw - w);
+        resizing.y = clamp(y, sh - h);
     }
 
     private static int clamp(int v, int max) {
@@ -95,10 +141,18 @@ public final class HudEditor implements Panel {
             dragging.y = ny;
         }
 
+        if (resizing != null)
+            resize(mouseX, mouseY, sw, sh);
+
         boxes.clear();
-        for (Element e : elements)
+        bases.clear();
+        for (Element e : elements) {
+            bases.put(e, base(c, e));
             boxes.put(e, box(c, e, sw, sh));
-        hovered = dragging != null ? dragging : at(mouseX, mouseY);
+        }
+        final Object[] grab = resizing == null && dragging == null ? cornerAt(mouseX, mouseY) : null;
+        hovered = resizing != null ? resizing : dragging != null ? dragging : grab != null ? (Element) grab[0] : at(mouseX, mouseY);
+        final int activeCorner = resizing != null ? corner : grab != null ? (int) grab[1] : -1;
 
         help(c, sw, sh);
         for (Element e : elements) {
@@ -114,6 +168,13 @@ public final class HudEditor implements Panel {
                 c.pop();
             }
             outline(c, b, e == hovered ? Palette.VENOM : e.enabled ? Palette.DIM : Palette.MUTED);
+            if (e == hovered) {
+                for (int k = 0; k < 4; k++) {
+                    final int[] p = cornerPoint(b, k);
+                    final int r = k == activeCorner ? HANDLE : HANDLE / 2;
+                    c.fill(p[0] - r, p[1] - r, p[0] + r, p[1] + r, k == activeCorner ? Palette.VENOM : Palette.DIM);
+                }
+            }
         }
 
         if (hovered != null) {
@@ -156,6 +217,17 @@ public final class HudEditor implements Panel {
 
     @Override
     public boolean click(int x, int y, int button) {
+        if (button == InputConstants.MOUSE_BUTTON_LEFT) {
+            final Object[] grab = cornerAt(x, y);
+            if (grab != null) {
+                resizing = (Element) grab[0];
+                corner = (int) grab[1];
+                final int[] anchor = cornerPoint(boxes.get(resizing), 3 - corner);
+                anchorX = anchor[0];
+                anchorY = anchor[1];
+                return true;
+            }
+        }
         final Element e = at(x, y);
         if (e == null)
             return false;
@@ -181,6 +253,7 @@ public final class HudEditor implements Panel {
     @Override
     public void release() {
         dragging = null;
+        resizing = null;
     }
 
     @Override
@@ -205,6 +278,7 @@ public final class HudEditor implements Panel {
     @Override
     public void closed() {
         dragging = null;
+        resizing = null;
         config.save(hud);
         hud.editing(false);
     }
