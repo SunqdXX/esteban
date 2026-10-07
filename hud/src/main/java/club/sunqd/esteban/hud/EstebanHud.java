@@ -1,7 +1,7 @@
 package club.sunqd.esteban.hud;
 
 import club.sunqd.esteban.common.render.HudLayers;
-import club.sunqd.esteban.hud.element.Cps;
+import club.sunqd.esteban.hud.input.Clicks;
 
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientLifecycleEvents;
@@ -37,10 +37,9 @@ public class EstebanHud implements ClientModInitializer {
         if (!config.load(hud))
             config.save(hud);
         HudLayers.add("esteban-hud", "elements", hud::render);
-        final Cps cps = (Cps) hud.get("cps");
         ClientPreAttackCallback.EVENT.register((mc, player, clicks) -> {
             if (clicks > 0)
-                cps.clicked(clicks);
+                Clicks.LEFT.add(clicks);
             return false;
         });
         ClientLifecycleEvents.CLIENT_STOPPING.register(mc -> config.save(hud));

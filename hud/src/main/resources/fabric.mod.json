@@ -18,6 +18,7 @@
       "club.sunqd.esteban.hud.EstebanHud"
     ]
   },
+  "mixins": ["esteban-hud.mixins.json"],
   "jars": [],
   "depends": {
     "minecraft": "${mc}",

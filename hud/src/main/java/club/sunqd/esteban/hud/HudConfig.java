@@ -44,6 +44,7 @@ public final class HudConfig {
                 if (o.has("scale")) e.scale = Math.max(0.5f, Math.min(3f, o.get("scale").getAsFloat()));
                 if (o.has("background")) e.background = o.get("background").getAsBoolean();
                 if (o.has("color")) e.color = color(o.get("color"), e.color);
+                e.read(o);
             }
             return true;
         } catch (RuntimeException | IOException ex) {
@@ -62,6 +63,7 @@ public final class HudConfig {
             o.addProperty("scale", e.scale);
             o.addProperty("background", e.background);
             o.addProperty("color", String.format(Locale.ROOT, "#%06X", e.color & 0xFFFFFF));
+            e.write(o);
             elements.add(e.id(), o);
         }
         final JsonObject root = new JsonObject();

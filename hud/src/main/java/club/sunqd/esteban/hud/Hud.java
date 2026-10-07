@@ -5,7 +5,9 @@ import club.sunqd.esteban.hud.element.Coords;
 import club.sunqd.esteban.hud.element.Cps;
 import club.sunqd.esteban.hud.element.Element;
 import club.sunqd.esteban.hud.element.Fps;
+import club.sunqd.esteban.hud.element.Keystrokes;
 import club.sunqd.esteban.hud.element.Ping;
+import club.sunqd.esteban.hud.element.ToggleSprint;
 
 import net.minecraft.client.Minecraft;
 
@@ -17,7 +19,9 @@ public final class Hud {
             new Fps(4, 4),
             new Cps(4, 20),
             new Coords(4, 36),
-            new Ping(4, 52)
+            new Ping(4, 52),
+            new Keystrokes(4, 68),
+            new ToggleSprint(4, 156)
     );
 
     public List<Element> elements() {
@@ -38,10 +42,13 @@ public final class Hud {
         final int width = mc.getWindow().getGuiScaledWidth();
         final int height = mc.getWindow().getGuiScaledHeight();
         for (Element e : elements) {
-            if (!e.enabled)
+            if (!e.enabled) {
+                e.inactive(mc);
                 continue;
+            }
             e.update(mc);
-            e.render(canvas, width, height);
+            if (e.visible())
+                e.render(canvas, width, height);
         }
     }
 }

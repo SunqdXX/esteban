@@ -3,6 +3,8 @@ package club.sunqd.esteban.hud.element;
 import club.sunqd.esteban.common.render.Canvas;
 import club.sunqd.esteban.hud.Palette;
 
+import com.google.gson.JsonObject;
+
 import net.minecraft.client.Minecraft;
 
 public abstract class Element {
@@ -33,6 +35,16 @@ public abstract class Element {
     }
 
     public void update(Minecraft mc) { }
+
+    public void inactive(Minecraft mc) { }
+
+    public void read(JsonObject o) { }
+
+    public void write(JsonObject o) { }
+
+    public boolean visible() {
+        return true;
+    }
 
     public abstract int width(Canvas c);
 

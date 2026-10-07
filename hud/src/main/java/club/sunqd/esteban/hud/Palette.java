@@ -15,5 +15,7 @@ public final class Palette {
 
     public static final int BACKGROUND = 0x901A1B26;
 
+    public static final int INK = 0xFF1A1B26;
+
     private Palette() { }
 }
