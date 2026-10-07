@@ -2,13 +2,18 @@ package club.sunqd.esteban.hud;
 
 import club.sunqd.esteban.common.render.Canvas;
 import club.sunqd.esteban.hud.element.ArmorStatus;
+import club.sunqd.esteban.hud.element.ArrowCounter;
+import club.sunqd.esteban.hud.element.Clock;
 import club.sunqd.esteban.hud.element.Coords;
 import club.sunqd.esteban.hud.element.Cps;
+import club.sunqd.esteban.hud.element.DirectionBar;
 import club.sunqd.esteban.hud.element.Element;
 import club.sunqd.esteban.hud.element.Fps;
 import club.sunqd.esteban.hud.element.Keystrokes;
 import club.sunqd.esteban.hud.element.Ping;
 import club.sunqd.esteban.hud.element.Potions;
+import club.sunqd.esteban.hud.element.Saturation;
+import club.sunqd.esteban.hud.element.Speed;
 import club.sunqd.esteban.hud.element.ToggleSprint;
 
 import net.minecraft.client.Minecraft;
@@ -25,7 +30,12 @@ public final class Hud {
             new Keystrokes(4, 68),
             new ToggleSprint(4, 156),
             new ArmorStatus(10000, 10000),
-            new Potions(10000, 104)
+            new Potions(10000, 104),
+            new DirectionBar(Element.CENTER, 2),
+            new Clock(Element.CENTER, 34),
+            new Speed(Element.CENTER, 50),
+            new Saturation(Element.CENTER, 66),
+            new ArrowCounter(10000, 200)
     );
 
     private volatile boolean editing;

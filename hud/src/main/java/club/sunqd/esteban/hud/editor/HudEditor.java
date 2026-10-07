@@ -58,7 +58,7 @@ public final class HudEditor implements Panel {
             w = Math.round((c.width(placeholder(e)) + 8) * e.scale);
             h = Math.round((c.fontHeight() + 5) * e.scale);
         }
-        return new int[] {clamp(e.x, sw - w), clamp(e.y, sh - h), w, h};
+        return new int[] {Element.place(e.x, w, sw), Element.place(e.y, h, sh), w, h};
     }
 
     private static int clamp(int v, int max) {

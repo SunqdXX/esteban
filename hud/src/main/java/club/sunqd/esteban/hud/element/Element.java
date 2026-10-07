@@ -9,6 +9,8 @@ import net.minecraft.client.Minecraft;
 
 public abstract class Element {
 
+    public static final int CENTER = Integer.MIN_VALUE;
+
     private final String id;
     private final String name;
 
@@ -52,12 +54,18 @@ public abstract class Element {
 
     protected abstract void draw(Canvas c);
 
+    public static int place(int v, int size, int screen) {
+        if (v == CENTER)
+            return Math.max(0, (screen - size) / 2);
+        return Math.max(0, Math.min(v, Math.max(0, screen - size)));
+    }
+
     public int left(Canvas c, int screenWidth) {
-        return Math.max(0, Math.min(x, screenWidth - Math.round(width(c) * scale)));
+        return place(x, Math.round(width(c) * scale), screenWidth);
     }
 
     public int top(Canvas c, int screenHeight) {
-        return Math.max(0, Math.min(y, screenHeight - Math.round(height(c) * scale)));
+        return place(y, Math.round(height(c) * scale), screenHeight);
     }
 
     public final void render(Canvas c, int screenWidth, int screenHeight) {
