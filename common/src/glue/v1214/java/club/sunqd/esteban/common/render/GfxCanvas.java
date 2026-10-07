@@ -1,7 +1,12 @@
 package club.sunqd.esteban.common.render;
 
+import club.sunqd.esteban.common.compat.EffectIcons;
+
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.core.Holder;
+import net.minecraft.world.effect.MobEffect;
+import net.minecraft.world.item.ItemStack;
 
 public record GfxCanvas(GuiGraphics g, Font font) implements Canvas {
 
@@ -40,5 +45,20 @@ public record GfxCanvas(GuiGraphics g, Font font) implements Canvas {
     @Override
     public void pop() {
         g.pose().popPose();
+    }
+
+    @Override
+    public void item(ItemStack stack, int x, int y) {
+        g.renderItem(stack, x, y);
+    }
+
+    @Override
+    public void itemDecorations(ItemStack stack, int x, int y) {
+        g.renderItemDecorations(font, stack, x, y);
+    }
+
+    @Override
+    public void effectIcon(Holder<MobEffect> effect, int x, int y, int size) {
+        EffectIcons.draw(g, effect, x, y, size);
     }
 }
