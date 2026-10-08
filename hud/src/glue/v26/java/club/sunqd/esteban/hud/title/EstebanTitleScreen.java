@@ -35,6 +35,7 @@ public final class EstebanTitleScreen extends TitleScreen implements TitleAction
     @Override
     protected void init() {
         super.init();
+        Backgrounds.get().refresh();
         widgets.clear();
         for (GuiEventListener child : children())
             if (child instanceof AbstractWidget w && w.visible)

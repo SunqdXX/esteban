@@ -14,8 +14,12 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Stream;
 
 public final class Backgrounds {
@@ -38,6 +42,9 @@ public final class Backgrounds {
 
     private final List<Image> wallpapers = new CopyOnWriteArrayList<>();
     private final ConcurrentLinkedQueue<Runnable> uploads = new ConcurrentLinkedQueue<>();
+    private final Set<String> seen = ConcurrentHashMap.newKeySet();
+    private final AtomicBoolean loading = new AtomicBoolean();
+    private final AtomicInteger customs = new AtomicInteger();
     private Image logo;
     private String glow;
 
@@ -90,12 +97,34 @@ public final class Backgrounds {
         }
         Images.register(NS + "title/glow", Images.image(GLOW, GLOW, glowPixels()));
         glow = NS + "title/glow";
-        final Thread loader = new Thread(this::loadWallpapers, "esteban-backgrounds");
+        loading.set(true);
+        final Thread loader = new Thread(() -> {
+            try {
+                loadBuiltIn();
+                loadCustom();
+            } finally {
+                loading.set(false);
+            }
+        }, "esteban-backgrounds");
         loader.setDaemon(true);
         loader.start();
     }
 
-    private void loadWallpapers() {
+    public void refresh() {
+        if (!loading.compareAndSet(false, true))
+            return;
+        final Thread loader = new Thread(() -> {
+            try {
+                loadCustom();
+            } finally {
+                loading.set(false);
+            }
+        }, "esteban-backgrounds");
+        loader.setDaemon(true);
+        loader.start();
+    }
+
+    private void loadBuiltIn() {
         for (String name : BUILT_IN) {
             try (InputStream in = Backgrounds.class.getResourceAsStream(ROOT + name + ".png")) {
                 if (in == null)
@@ -105,12 +134,21 @@ public final class Backgrounds {
                 log("could not load " + name + ".png: " + e);
             }
         }
-        int custom = 0;
+    }
+
+    private void loadCustom() {
         for (Path file : customFiles()) {
+            final String name = file.getFileName().toString();
+            if (!seen.add(name))
+                continue;
+            if (customs.get() >= MAX_CUSTOM) {
+                log("skipped " + name + ", only " + MAX_CUSTOM + " custom backgrounds are used");
+                continue;
+            }
             try (InputStream in = Files.newInputStream(file)) {
-                prepare("title/custom_" + custom++, file.getFileName().toString(), Images.read(in));
+                prepare("title/custom_" + customs.getAndIncrement(), name, Images.read(in));
             } catch (IOException | RuntimeException e) {
-                log("skipped custom background " + file.getFileName() + ": " + e.getMessage());
+                log("skipped custom background " + name + ": " + e.getMessage());
             }
         }
     }
@@ -131,10 +169,6 @@ public final class Backgrounds {
             }
         } catch (IOException e) {
             log("could not read " + dir + ": " + e.getMessage());
-        }
-        if (out.size() > MAX_CUSTOM) {
-            log("using the first " + MAX_CUSTOM + " of " + out.size() + " custom backgrounds");
-            return out.subList(0, MAX_CUSTOM);
         }
         return out;
     }
