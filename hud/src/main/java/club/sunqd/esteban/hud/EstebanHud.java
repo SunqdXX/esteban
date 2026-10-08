@@ -6,6 +6,8 @@ import club.sunqd.esteban.common.render.HudLayers;
 import club.sunqd.esteban.common.screen.CanvasScreen;
 import club.sunqd.esteban.hud.editor.HudEditor;
 import club.sunqd.esteban.hud.input.Clicks;
+import club.sunqd.esteban.hud.title.Backgrounds;
+import club.sunqd.esteban.hud.title.Titles;
 import club.sunqd.esteban.hud.world.Outlines;
 
 import com.mojang.blaze3d.platform.InputConstants;
@@ -17,6 +19,10 @@ import net.fabricmc.fabric.api.event.client.player.ClientPreAttackCallback;
 import net.fabricmc.loader.api.FabricLoader;
 
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.screens.Screen;
+
+import java.io.IOException;
+import java.nio.file.Files;
 
 public class EstebanHud implements ClientModInitializer {
 
@@ -58,6 +64,16 @@ public class EstebanHud implements ClientModInitializer {
             final Minecraft mc = Minecraft.getInstance();
             if (key == InputConstants.KEY_RSHIFT && mc.player != null && Platform.screen(mc) == null)
                 openEditor = true;
+        });
+        try {
+            Files.createDirectories(Backgrounds.customFolder());
+        } catch (IOException e) {
+            System.err.println("[" + NAME + "] could not create " + Backgrounds.customFolder() + ": " + e);
+        }
+        ClientTickEvents.END_CLIENT_TICK.register(mc -> {
+            final Screen screen = Platform.screen(mc);
+            if (Titles.vanilla(screen))
+                Platform.setScreen(mc, Titles.swap(screen));
         });
         ClientTickEvents.END_CLIENT_TICK.register(mc -> {
             if (!openEditor)

@@ -22,6 +22,7 @@ import club.sunqd.esteban.hud.element.ShieldCooldown;
 import club.sunqd.esteban.hud.element.Speed;
 import club.sunqd.esteban.hud.element.ToggleSprint;
 import club.sunqd.esteban.hud.element.TotemPops;
+import club.sunqd.esteban.hud.title.TitleSettings;
 
 import net.minecraft.client.Minecraft;
 
@@ -52,7 +53,13 @@ public final class Hud {
             new LowShield()
     );
 
+    private final TitleSettings title = new TitleSettings();
+
     private volatile boolean editing;
+
+    public TitleSettings title() {
+        return title;
+    }
 
     public boolean editing() {
         return editing;

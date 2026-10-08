@@ -25,4 +25,10 @@ public interface Canvas {
     void itemDecorations(ItemStack stack, int x, int y);
 
     void effectIcon(Holder<MobEffect> effect, int x, int y, int size);
+
+    void image(String texture, int textureWidth, int textureHeight, float x, float y, float width, float height, int color);
+
+    void text(String s, int x, int y, int color, String font);
+
+    int width(String s, String font);
 }

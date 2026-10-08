@@ -46,6 +46,8 @@ public final class HudConfig {
                 if (o.has("color")) e.color = color(o.get("color"), e.color);
                 e.read(o);
             }
+            if (root.has("title"))
+                hud.title().read(root.getAsJsonObject("title"));
             return true;
         } catch (RuntimeException | IOException ex) {
             System.err.println("[" + EstebanHud.NAME + "] could not read " + file + ": " + ex);
@@ -68,6 +70,7 @@ public final class HudConfig {
         }
         final JsonObject root = new JsonObject();
         root.add("elements", elements);
+        root.add("title", hud.title().write());
         try {
             Files.createDirectories(file.getParent());
             final Path part = file.resolveSibling(file.getFileName() + ".part");

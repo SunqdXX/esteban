@@ -9,7 +9,8 @@
     "FireMixin",
     "HandMixin",
     "KeyMappingAccess",
-    "MinecraftMixin"
+    "MinecraftMixin",
+    "TitleSwapMixin"
   ],
   "injectors": {
     "defaultRequire": 0

@@ -37,6 +37,10 @@ public final class Platform {
         }
     }
 
+    public static void setScreen(Minecraft mc, Screen screen) {
+        mc.setScreen(screen);
+    }
+
     public static Screen screen(Minecraft mc) {
         return mc.screen;
     }
