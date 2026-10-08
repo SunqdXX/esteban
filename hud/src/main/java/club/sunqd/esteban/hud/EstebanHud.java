@@ -6,6 +6,7 @@ import club.sunqd.esteban.common.render.HudLayers;
 import club.sunqd.esteban.common.screen.CanvasScreen;
 import club.sunqd.esteban.hud.editor.HudEditor;
 import club.sunqd.esteban.hud.input.Clicks;
+import club.sunqd.esteban.hud.world.Outlines;
 
 import com.mojang.blaze3d.platform.InputConstants;
 
@@ -47,6 +48,7 @@ public class EstebanHud implements ClientModInitializer {
         if (!config.load(hud))
             config.save(hud);
         HudLayers.add("esteban-hud", "elements", hud::render);
+        Outlines.register(hud.outline());
         ClientPreAttackCallback.EVENT.register((mc, player, clicks) -> {
             if (clicks > 0)
                 Clicks.LEFT.add(clicks);

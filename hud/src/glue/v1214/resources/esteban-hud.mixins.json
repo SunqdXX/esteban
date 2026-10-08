@@ -4,6 +4,10 @@
   "package": "club.sunqd.esteban.hud.mixin",
   "compatibilityLevel": "JAVA_21",
   "client": [
+    "ClientPacketListenerMixin",
+    "CrosshairMixin",
+    "FireMixin",
+    "HandMixin",
     "KeyMappingAccess",
     "MinecraftMixin"
   ],

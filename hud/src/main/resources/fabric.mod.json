@@ -26,6 +26,7 @@
     "esteban-common": "${version}",
     "fabric-lifecycle-events-v1": "*",
     "fabric-events-interaction-v0": "*",
-    "fabric-rendering-v1": "*"
+    "fabric-rendering-v1": "*",
+    "fabric-transitive-access-wideners-v1": "*"
   }
 }

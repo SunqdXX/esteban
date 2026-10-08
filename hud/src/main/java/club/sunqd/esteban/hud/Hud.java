@@ -3,18 +3,25 @@ package club.sunqd.esteban.hud;
 import club.sunqd.esteban.common.render.Canvas;
 import club.sunqd.esteban.hud.element.ArmorStatus;
 import club.sunqd.esteban.hud.element.ArrowCounter;
+import club.sunqd.esteban.hud.element.BlockOutline;
 import club.sunqd.esteban.hud.element.Clock;
+import club.sunqd.esteban.hud.element.Combo;
 import club.sunqd.esteban.hud.element.Coords;
 import club.sunqd.esteban.hud.element.Cps;
+import club.sunqd.esteban.hud.element.Crosshair;
 import club.sunqd.esteban.hud.element.DirectionBar;
 import club.sunqd.esteban.hud.element.Element;
 import club.sunqd.esteban.hud.element.Fps;
 import club.sunqd.esteban.hud.element.Keystrokes;
+import club.sunqd.esteban.hud.element.LowFire;
+import club.sunqd.esteban.hud.element.LowShield;
 import club.sunqd.esteban.hud.element.Ping;
 import club.sunqd.esteban.hud.element.Potions;
 import club.sunqd.esteban.hud.element.Saturation;
+import club.sunqd.esteban.hud.element.ShieldCooldown;
 import club.sunqd.esteban.hud.element.Speed;
 import club.sunqd.esteban.hud.element.ToggleSprint;
+import club.sunqd.esteban.hud.element.TotemPops;
 
 import net.minecraft.client.Minecraft;
 
@@ -35,7 +42,14 @@ public final class Hud {
             new Clock(Element.CENTER, 34),
             new Speed(Element.CENTER, 50),
             new Saturation(Element.CENTER, 66),
-            new ArrowCounter(10000, 200)
+            new ArrowCounter(10000, 200),
+            new Combo(4, 172),
+            new TotemPops(4, 190),
+            new ShieldCooldown(Element.CENTER, 82),
+            new Crosshair(),
+            new BlockOutline(),
+            new LowFire(),
+            new LowShield()
     );
 
     private volatile boolean editing;
@@ -52,6 +66,23 @@ public final class Hud {
         return elements;
     }
 
+    public Crosshair crosshair() {
+        return (Crosshair) get("crosshair");
+    }
+
+    public BlockOutline outline() {
+        return (BlockOutline) get("outline");
+    }
+
+    public boolean replaceCrosshair(Canvas canvas, int width, int height) {
+        final Crosshair crosshair = crosshair();
+        if (!crosshair.enabled)
+            return false;
+        if (!editing)
+            crosshair.render(canvas, width, height);
+        return true;
+    }
+
     public Element get(String id) {
         for (Element e : elements)
             if (e.id().equals(id))
@@ -66,6 +97,8 @@ public final class Hud {
         final int width = mc.getWindow().getGuiScaledWidth();
         final int height = mc.getWindow().getGuiScaledHeight();
         for (Element e : elements) {
+            if (!e.onHud())
+                continue;
             if (!e.enabled) {
                 e.inactive(mc);
                 continue;

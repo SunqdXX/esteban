@@ -48,6 +48,32 @@ public abstract class Element {
         return true;
     }
 
+    public boolean movable() {
+        return true;
+    }
+
+    public boolean onHud() {
+        return true;
+    }
+
+    public boolean world() {
+        return false;
+    }
+
+    public boolean available() {
+        return true;
+    }
+
+    public boolean colored() {
+        return true;
+    }
+
+    public String option() {
+        return null;
+    }
+
+    public void cycle() { }
+
     public abstract int width(Canvas c);
 
     public abstract int height(Canvas c);
@@ -69,7 +95,11 @@ public abstract class Element {
     }
 
     public final void render(Canvas c, int screenWidth, int screenHeight) {
-        c.push(left(c, screenWidth), top(c, screenHeight), scale);
+        renderAt(c, left(c, screenWidth), top(c, screenHeight), scale);
+    }
+
+    public final void renderAt(Canvas c, float x, float y, float size) {
+        c.push(x, y, size);
         draw(c);
         c.pop();
     }
